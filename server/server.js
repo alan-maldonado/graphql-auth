@@ -5,14 +5,14 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const passport = require('passport');
 const passportConfig = require('./services/auth');
-const MongoStore = require('connect-mongo')(session);
-const schema = require('./schema/schema');
+const MongoStore = require('connect-mongo');
+// const schema = require('./schema/schema');
 
 // Create a new Express application
 const app = express();
 
 // Replace with your mongoLab URI
-const MONGO_URI = '';
+const MONGO_URI = 'mongodb+srv://alan:maldonado@cluster.z6qtb.mongodb.net';
 
 // Mongoose's built in promise library is deprecated, replace it with ES2015 Promise
 mongoose.Promise = global.Promise;
@@ -23,7 +23,6 @@ mongoose.connect(MONGO_URI);
 mongoose.connection
     .once('open', () => console.log('Connected to MongoLab instance.'))
     .on('error', error => console.log('Error connecting to MongoLab:', error));
-
 // Configures express to use sessions.  This places an encrypted identifier
 // on the users cookie.  When a user makes a request, this middleware examines
 // the cookie and modifies the request object to indicate which user made the request
@@ -33,9 +32,9 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: 'aaabbbccc',
-  store: new MongoStore({
-    url: MONGO_URI,
-    autoReconnect: true
+  store: MongoStore.create({
+    mongoUrl: MONGO_URI,
+    autoReconnect: true,
   })
 }));
 
@@ -47,10 +46,10 @@ app.use(passport.session());
 
 // Instruct Express to pass on any request made to the '/graphql' route
 // to the GraphQL instance.
-app.use('/graphql', expressGraphQL({
-  schema,
-  graphiql: true
-}));
+// app.use('/graphql', expressGraphQL({
+//   schema,
+//   graphiql: true
+// }));
 
 // Webpack runs as a middleware.  If any request comes in for the root route ('/')
 // Webpack will respond with the output of the webpack process: an HTML file and
