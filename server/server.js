@@ -6,7 +6,7 @@ const session = require('express-session');
 const passport = require('passport');
 const passportConfig = require('./services/auth');
 const MongoStore = require('connect-mongo');
-// const schema = require('./schema/schema');
+const schema = require('./schema/schema');
 
 // Create a new Express application
 const app = express();
@@ -46,10 +46,10 @@ app.use(passport.session());
 
 // Instruct Express to pass on any request made to the '/graphql' route
 // to the GraphQL instance.
-// app.use('/graphql', expressGraphQL({
-//   schema,
-//   graphiql: true
-// }));
+app.use('/graphql', expressGraphQL({
+  schema,
+  graphiql: true
+}));
 
 // Webpack runs as a middleware.  If any request comes in for the root route ('/')
 // Webpack will respond with the output of the webpack process: an HTML file and
